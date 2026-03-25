@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 9: DO NOW</title>
+    
+    <!-- MathJax for rendering Algebra beautifully -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%);
+            --card-front: #FFFFFF;
+            --card-back: #10B981; /* Emerald Green for answers */
+            --accent: #4F46E5; /* Indigo */
+            --text-main: #102A43; /* Dark Slate for high contrast */
+            --text-muted: #486581;
+            --border-color: #D9E2EC;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevents scrollbars on 1080p screens */
+        }
+
+        /* --- Header & Controls --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 2px solid var(--border-color);
+            height: 100px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .header-titles h1 {
+            font-size: 2.2rem;
+            color: var(--text-main);
+            margin-bottom: 0;
+        }
+
+        .header-date {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(79, 70, 229, 0.1);
+            padding: 8px 20px;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* --- Timer Styles --- */
+        .timer-wrapper {
+            display: flex;
+            align-items: center;
+            background: #FFFFFF;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 4px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            gap: 12px;
+        }
+
+        #time-display {
+            font-size: 2.8rem; /* Massively increased timer size */
+            font-weight: 800;
+            color: var(--primary-dark);
+            font-variant-numeric: tabular-nums; /* Keeps numbers monospaced */
+            min-width: 110px; /* Widened to accommodate larger font without jumping */
+            text-align: center;
+        }
+
+        .time-up {
+            color: #DC2626 !important; /* Red when time is up */
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .timer-controls button {
+            padding: 6px 10px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            background: #EEF2FF;
+            color: var(--accent);
+            border: 1px solid #C7D2FE;
+            box-shadow: none;
+        }
+
+        .timer-controls button:hover {
+            background: var(--accent);
+            color: white;
+            transform: none;
+            box-shadow: none;
+        }
+
+        select, .reveal-btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select {
+            background: #FFFFFF;
+            color: var(--text-main);
+            border-color: var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        button.reveal-btn {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        button.reveal-btn:hover {
+            background: #4338CA;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* --- Main Grid Area --- */
+        main {
+            flex-grow: 1;
+            padding: 20px 40px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 100px);
+        }
+
+        .focus-banner {
+            background: #E0E7FF;
+            border-left: 5px solid var(--accent);
+            padding: 15px 25px;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #3730A3;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 columns */
+            grid-template-rows: repeat(5, 1fr); /* 5 rows perfectly fill the height */
+            gap: 15px;
+            flex-grow: 1;
+            padding-bottom: 10px;
+        }
+
+        /* --- Flip Cards --- */
+        .card {
+            background-color: transparent;
+            perspective: 1000px;
+            cursor: pointer;
+            height: 100%;
+            min-height: 80px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-front {
+            background-color: var(--card-front);
+            border-left: 6px solid var(--accent);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--accent);
+        }
+
+        /* Hover effect on front */
+        .card:hover .card-front {
+            background-color: #F8FAFC;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-back {
+            background-color: var(--card-back);
+            color: white;
+            transform: rotateY(180deg);
+            border: 2px solid #047857;
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .q-number {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #94A3B8;
+        }
+
+        .card-back .q-number {
+            color: #A7F3D0; /* Light green text */
+        }
+
+        .diff-badge {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #F1F5F9;
+            color: #475569;
+            font-weight: 700;
+            border: 1px solid #E2E8F0;
+        }
+
+        .card-back .diff-badge {
+            background: #065F46;
+            color: white;
+            border: none;
+        }
+
+        .math-content {
+            font-size: 2.0rem; /* Increased size for questions */
+            line-height: 1.3;
+        }
+
+        .card-back .math-content {
+            font-size: 2.5rem; /* Increased size for answers */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-titles">
+            <h1 id="main-title">Year 9: DO NOW</h1>
+        </div>
+        
+        <!-- Dynamic Date Display -->
+        <div class="header-date" id="current-date">
+            <!-- Date injected here via JS -->
+        </div>
+
+        <div class="controls">
+            <!-- Timer Component -->
+            <div class="timer-wrapper">
+                <span id="time-display">10:00</span>
+                <div class="timer-controls">
+                    <button id="play-pause-btn" onclick="toggleTimer()" title="Play/Pause">▶️</button>
+                    <button onclick="addMinute()" title="Add 1 Minute">+1m</button>
+                    <button onclick="resetTimer()" title="Reset to 10m">🔄</button>
+                </div>
+            </div>
+
+            <select id="lesson-select" onchange="loadLesson()">
+                <option value="lesson2">Lesson 2: Multiplying Integers & Terms</option>
+                <option value="lesson3">Lesson 3: Adding & Subtracting Like Terms</option>
+                <option value="lesson4">Lesson 4: Harder Like Terms</option>
+                <option value="lesson5">Lesson 5: Index Form</option>
+                <option value="lesson6">Lesson 6: Multiplying with Indices</option>
+                <option value="lesson7">Lesson 7: Dividing with Indices</option>
+                <option value="lesson8">Lesson 8: Substitution</option>
+                <option value="lesson10">Lesson 10: Expanding with Negatives</option>
+                <option value="lesson11">Lesson 11: Expanding & Collecting</option>
+                <option value="lesson12">Lesson 12: Factorising to Single Brackets</option>
+                <option value="lesson13">Lesson 13: Harder Factorising</option>
+                <option value="lesson14">Lesson 14: Unit Revision</option>
+            </select>
+            <button class="reveal-btn" onclick="toggleAll()">Reveal/Hide All Answers</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="focus-banner" class="focus-banner">
+            Focus: Loading...
+        </div>
+        <div id="grid" class="grid-container">
+            <!-- Cards will be injected here by JS -->
+        </div>
+    </main>
+
+    <script>
+        // Database of all questions and computed answers
+        const lessonData = {
+            lesson2: {
+                title: "Lesson 2 Starter",
+                focus: "Reviewing Lesson 1 (Vocabulary & Expressions) and introducing multiplication.",
+                questions: [
+                    { diff: "Extremely Easy", q: "What letter is the variable in $3x$?", a: "$x$" },
+                    { diff: "Very Easy", q: "What is the constant in the expression $3x + 2y + 6$?", a: "$6$" },
+                    { diff: "Easy", q: "Write as algebra: A number plus three.", a: "$x + 3$" },
+                    { diff: "Easy", q: "Write as algebra: Seven plus a number.", a: "$7 + x$" },
+                    { diff: "Building Confidence", q: "Write as algebra: A number multiplied by six.", a: "$6x$" },
+                    { diff: "Progressively Harder", q: "Write as algebra: $m$ divided by 5.", a: "$\\frac{m}{5}$" },
+                    { diff: "Harder", q: "Write as algebra: $m$ shared between 3.", a: "$\\frac{m}{3}$" },
+                    { diff: "Harder", q: "Write as algebra: $m$ multiplied by 2 and then add 3.", a: "$2m + 3$" },
+                    { diff: "Hardest HW Review", q: "Write as algebra: $y$ squared and then multiplied by 4.", a: "$4y^2$" },
+                    { diff: "Current Lesson Intro", q: "We know that $3 \\times a$ is written as $3a$. How do you think we write $5y \\times 2y$?", a: "$10y^2$" }
+                ]
+            },
+            lesson3: {
+                title: "Lesson 3 Starter",
+                focus: "Reviewing Lesson 2 (Multiplying terms) and introducing adding/subtracting like terms.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $3 \\times 2x$", a: "$6x$" },
+                    { diff: "Very Easy", q: "Simplify $4y \\times 5$", a: "$20y$" },
+                    { diff: "Easy", q: "Simplify $a \\times b$", a: "$ab$" },
+                    { diff: "Easy", q: "Simplify $m \\times m$", a: "$m^2$" },
+                    { diff: "Building Confidence", q: "Simplify $2x \\times 3x$", a: "$6x^2$" },
+                    { diff: "Progressively Harder", q: "Simplify $-4 \\times 3y$", a: "$-12y$" },
+                    { diff: "Harder", q: "Simplify $-2a \\times -5b$", a: "$10ab$" },
+                    { diff: "Harder", q: "Simplify $2c \\times 3c \\times c$", a: "$6c^3$" },
+                    { diff: "Hardest HW Review", q: "Simplify $5y \\times 2y \\times 3y^2$", a: "$30y^4$" },
+                    { diff: "Current Lesson Intro", q: "We know $3x \\times 2x = 6x^2$. But what happens if we add them? Simplify $3x + 2x$.", a: "$5x$" }
+                ]
+            },
+            lesson4: {
+                title: "Lesson 4 Starter",
+                focus: "Reviewing Lesson 3 (Adding Like Terms) and introducing harder terms.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $x + x + x$", a: "$3x$" },
+                    { diff: "Very Easy", q: "Simplify $4t + 2t$", a: "$6t$" },
+                    { diff: "Easy", q: "Simplify $6t + t$", a: "$7t$" },
+                    { diff: "Easy", q: "Simplify $3x + 2x$", a: "$5x$" },
+                    { diff: "Building Confidence", q: "Simplify $18 + 3x + 2y$", a: "$18 + 3x + 2y$<br><span style='font-size:0.6em; font-weight:normal;'>(Trick question! Cannot be simplified further)</span>" },
+                    { diff: "Progressively Harder", q: "Simplify $3x + 7 + 2x + 3$", a: "$5x + 10$" },
+                    { diff: "Harder", q: "Simplify $5y + 8 - 6t + 2$", a: "$5y - 6t + 10$" },
+                    { diff: "Harder", q: "Simplify $3g + 10 - 2g + 4$", a: "$g + 14$" },
+                    { diff: "Hardest HW Review", q: "Simplify $18w + 10 - 9w - 15$", a: "$9w - 5$" },
+                    { diff: "Current Lesson Intro", q: "Simplify $2x - 6y - 3x - 2y$", a: "$-x - 8y$" }
+                ]
+            },
+            lesson5: {
+                title: "Lesson 5 Starter",
+                focus: "Reviewing Lesson 4 (Collecting Like Terms) and introducing indices.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $a + a + a$", a: "$3a$" },
+                    { diff: "Very Easy", q: "Simplify $2a + 3a$", a: "$5a$" },
+                    { diff: "Easy", q: "Simplify $a + a + b + a + b$", a: "$3a + 2b$" },
+                    { diff: "Easy", q: "Simplify $2a + 3a + 4b + 2b$", a: "$5a + 6b$" },
+                    { diff: "Building Confidence", q: "Simplify $4x + x + y + 9y$", a: "$5x + 10y$" },
+                    { diff: "Progressively Harder", q: "Simplify $a + a + a - a + b + b$", a: "$2a + 2b$" },
+                    { diff: "Harder", q: "Simplify $5x - 2x + 3y + 4y$", a: "$3x + 7y$" },
+                    { diff: "Harder", q: "Simplify $8x - 6x + 3y - 2y$", a: "$2x + y$" },
+                    { diff: "Hardest HW Review", q: "Simplify $10x + 8y - 3x - 5y$", a: "$7x + 3y$" },
+                    { diff: "Current Lesson Intro", q: "We know $x + x$ is $2x$. What is $y \\times y$?", a: "$y^2$" }
+                ]
+            },
+            lesson6: {
+                title: "Lesson 6 Starter",
+                focus: "Reviewing Lesson 5 (Basic Powers) and introducing multiplying powers.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $2 \\times a$", a: "$2a$" },
+                    { diff: "Very Easy", q: "Simplify $a \\times a$", a: "$a^2$" },
+                    { diff: "Easy", q: "Simplify $4b^3 \\times 3b$", a: "$12b^4$" },
+                    { diff: "Easy", q: "Simplify $5c \\times 4c^2$", a: "$20c^3$" },
+                    { diff: "Building Confidence", q: "Simplify $2a^3 \\times 7a$", a: "$14a^4$" },
+                    { diff: "Progressively Harder", q: "Simplify $9m^2 \\times 3m^2$", a: "$27m^4$" },
+                    { diff: "Harder", q: "Simplify $8x^3 \\times 2x^2$", a: "$16x^5$" },
+                    { diff: "Harder", q: "Simplify $7y \\times 3y^4$", a: "$21y^5$" },
+                    { diff: "Hardest HW Review", q: "Simplify $a^2 \\times 3b \\times 2a \\times b^2$", a: "$6a^3b^3$" },
+                    { diff: "Current Lesson Intro", q: "Simplify $4a^2 \\times 2a$", a: "$8a^3$" }
+                ]
+            },
+            lesson7: {
+                title: "Lesson 7 Starter",
+                focus: "Reviewing Lesson 6 (Multiplying Indices) and introducing division.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $2a \\times 3a$", a: "$6a^2$" },
+                    { diff: "Very Easy", q: "Simplify $5a \\times 2b$", a: "$10ab$" },
+                    { diff: "Easy", q: "Simplify $3ab \\times a$", a: "$3a^2b$" },
+                    { diff: "Easy", q: "Simplify $5b^2 \\times b$", a: "$5b^3$" },
+                    { diff: "Building Confidence", q: "Simplify $3a \\times 2a \\times a$", a: "$6a^3$" },
+                    { diff: "Progressively Harder", q: "Simplify $a^4 \\times 3a^2$", a: "$3a^6$" },
+                    { diff: "Harder", q: "Simplify $7a \\times 2a^6$", a: "$14a^7$" },
+                    { diff: "Harder", q: "Simplify $b^3 \\times 2b^2 \\times 4b^4$", a: "$8b^9$" },
+                    { diff: "Hardest HW Review", q: "Simplify $ab^2 \\times 4ab \\times 5b^3$", a: "$20a^2b^6$" },
+                    { diff: "Current Lesson Intro", q: "Simplify $\\frac{12x^6y^5}{24x^3y^2}$", a: "$\\frac{x^3y^3}{2}$<br><span style='font-size:0.6em; font-weight:normal;'>(or $\\frac{1}{2}x^3y^3$)</span>" }
+                ]
+            },
+            lesson8: {
+                title: "Lesson 8 Starter",
+                focus: "Reviewing Lesson 7 (Dividing Indices) and introducing Substitution.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Simplify $\\frac{10}{2}$", a: "$5$" },
+                    { diff: "Very Easy", q: "Simplify $\\frac{10a^2}{2a}$", a: "$5a$" },
+                    { diff: "Easy", q: "Simplify $\\frac{9b}{3b}$", a: "$3$" },
+                    { diff: "Easy", q: "Simplify $\\frac{12a^3}{3a}$", a: "$4a^2$" },
+                    { diff: "Building Confidence", q: "Simplify $\\frac{15a^2}{5ab}$", a: "$\\frac{3a}{b}$" },
+                    { diff: "Progressively Harder", q: "Simplify $\\frac{14a}{2a}$", a: "$7$" },
+                    { diff: "Harder", q: "Simplify $18a \\div 3$", a: "$6a$" },
+                    { diff: "Harder", q: "Simplify $\\frac{22ab}{2a}$", a: "$11b$" },
+                    { diff: "Hardest HW Review", q: "Simplify $40abc \\div 8b$", a: "$5ac$" },
+                    { diff: "Current Lesson Intro", q: "If $a = 5$ and $b = 3$, evaluate $2b + 5$", a: "$2(3) + 5 = 11$" }
+                ]
+            },
+            lesson10: {
+                title: "Lesson 10 Starter",
+                focus: "Reviewing Lesson 9 (Basic Expanding) and introducing negative multipliers.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Expand $2(x + 1)$", a: "$2x + 2$" },
+                    { diff: "Very Easy", q: "Expand $4(b + 3)$", a: "$4b + 12$" },
+                    { diff: "Easy", q: "Expand $5(c + 2)$", a: "$5c + 10$" },
+                    { diff: "Easy", q: "Expand $7(d - 5)$", a: "$7d - 35$" },
+                    { diff: "Building Confidence", q: "Expand $3(h - 1)$", a: "$3h - 3$" },
+                    { diff: "Progressively Harder", q: "Expand $4(4a + 2)$", a: "$16a + 8$" },
+                    { diff: "Harder", q: "Expand $5(2m + 1)$", a: "$10m + 5$" },
+                    { diff: "Harder", q: "Expand $6(4n - 3)$", a: "$24n - 18$" },
+                    { diff: "Hardest HW Review", q: "Expand $2(7 - 4b)$", a: "$14 - 8b$" },
+                    { diff: "Current Lesson Intro", q: "Expand $-4(3x + 8)$", a: "$-12x - 32$" }
+                ]
+            },
+            lesson11: {
+                title: "Lesson 11 Starter",
+                focus: "Reviewing Lesson 10 (Expanding Harder) and combining skills.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Expand $3(2x - 7)$", a: "$6x - 21$" },
+                    { diff: "Very Easy", q: "Expand $-4(3x + 5)$", a: "$-12x - 20$" },
+                    { diff: "Easy", q: "Simplify $5x + 6x - 21$", a: "$11x - 21$" },
+                    { diff: "Building Confidence", q: "Expand & simplify $5x + 3(2x - 7)$", a: "$11x - 21$" },
+                    { diff: "Building Confidence", q: "Expand & simplify $2x - 4(3x + 5)$", a: "$-10x - 20$" },
+                    { diff: "Progressively Harder", q: "Expand & simplify $7 + 2(x + 3)$", a: "$2x + 13$" },
+                    { diff: "Harder", q: "Expand & simplify $8x - 3(4x - 2)$", a: "$-4x + 6$" },
+                    { diff: "Harder", q: "Expand & simplify $3(x + 5) + 2(x - 4)$", a: "$5x + 7$" },
+                    { diff: "Hardest HW Review", q: "Expand & simplify $10 - 4(2x + 3)$", a: "$-8x - 2$" },
+                    { diff: "Current Lesson Intro", q: "Expand & simplify $9(x + 4) - 4(x - 5)$", a: "$5x + 56$" }
+                ]
+            },
+            lesson12: {
+                title: "Lesson 12 Starter",
+                focus: "Reviewing Lesson 11 (Expand & Collect) and introducing Factorising.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Expand $2(x+5)$", a: "$2x + 10$" },
+                    { diff: "Very Easy", q: "Expand $3(x-2)$", a: "$3x - 6$" },
+                    { diff: "Easy", q: "Expand & simplify $4(x + 2) - 3(x - 5)$", a: "$x + 23$" },
+                    { diff: "Easy", q: "Expand & simplify $9x - 3(x + 3)$", a: "$6x - 9$" },
+                    { diff: "Building Confidence", q: "Expand & simplify $5(2x - 7) - 3$", a: "$10x - 38$" },
+                    { diff: "Progressively Harder", q: "Expand & simplify $2x(x + 1) - 3x(2x - 3)$", a: "$-4x^2 + 11x$" },
+                    { diff: "Harder", q: "Expand & simplify $8x - 2(3x + 2)$", a: "$2x - 4$" },
+                    { diff: "Harder", q: "Expand & simplify $5(2x - 3y + z)$", a: "$10x - 15y + 5z$" },
+                    { diff: "Hardest HW Review", q: "Expand & simplify $4x(x + 7) + 3x(2x - 3) - 14x$", a: "$10x^2 + 5x$" },
+                    { diff: "Current Lesson Intro", q: "How do we reverse $20x + 35$ back into brackets?", a: "$5(4x + 7)$" }
+                ]
+            },
+            lesson13: {
+                title: "Lesson 13 Starter",
+                focus: "Reviewing Lesson 12 (Factorising Basics) and introducing complex factorising.",
+                questions: [
+                    { diff: "Extremely Easy", q: "What is the Highest Common Factor of 6 and 9?", a: "$3$" },
+                    { diff: "Very Easy", q: "Factorise $3x - 9$", a: "$3(x - 3)$" },
+                    { diff: "Easy", q: "Factorise $5y - 20$", a: "$5(y - 4)$" },
+                    { diff: "Easy", q: "Factorise $4w - 12$", a: "$4(w - 3)$" },
+                    { diff: "Building Confidence", q: "Factorise $6x + 4y$", a: "$2(3x + 2y)$" },
+                    { diff: "Progressively Harder", q: "Factorise $9y - 12z$", a: "$3(3y - 4z)$" },
+                    { diff: "Harder", q: "Factorise $14w^2 - 7$", a: "$7(2w^2 - 1)$" },
+                    { diff: "Harder", q: "Factorise $5x^2 + x$", a: "$x(5x + 1)$" },
+                    { diff: "Hardest HW Review", q: "Factorise $15y^2 + 10y$", a: "$5y(3y + 2)$" },
+                    { diff: "Current Lesson Intro", q: "Factorise $6x^3y^4 - 12x^2y$", a: "$6x^2y(xy^3 - 2)$" }
+                ]
+            },
+            lesson14: {
+                title: "Lesson 14 Starter",
+                focus: "Reviewing Lesson 13 (Harder Factorising) and preparing for the test.",
+                questions: [
+                    { diff: "Extremely Easy", q: "Factorise $2x + 4$", a: "$2(x + 2)$" },
+                    { diff: "Very Easy", q: "Factorise $4x^2y + 10xy^2$", a: "$2xy(2x + 5y)$" },
+                    { diff: "Easy", q: "Factorise $6ab - 3a^2b^2$", a: "$3ab(2 - ab)$" },
+                    { diff: "Easy", q: "Factorise $2x^2y + 5xy$", a: "$xy(2x + 5)$" },
+                    { diff: "Building Confidence", q: "Factorise $abc^2 - a^2c$", a: "$ac(bc - a)$" },
+                    { diff: "Progressively Harder", q: "Factorise $14de^4 - 21d^2e^2$", a: "$7de^2(2e^2 - 3d)$" },
+                    { diff: "Harder", q: "Factorise $33f^3g^2 + 11f^2g$", a: "$11f^2g(3fg + 1)$" },
+                    { diff: "Harder", q: "Factorise $5x^5y^2 + 3x^2y$", a: "$x^2y(5x^3y + 3)$" },
+                    { diff: "Hardest HW Review", q: "Factorise $45pqr^2 - 25p^3qr$", a: "$5pqr(9r - 5p^2)$" },
+                    { diff: "Current Lesson Intro", q: "Write an expression for \"a number is added to two and then multiplied by 4\"", a: "$4(x + 2)$" }
+                ]
+            }
+        };
+
+        let allRevealed = false;
+
+        // Timer Variables
+        let timeLeft = 600; // 10 minutes in seconds
+        let timerInterval = null;
+        let isTimerRunning = false;
+
+        function updateTimerDisplay() {
+            const display = document.getElementById('time-display');
+            if (timeLeft <= 0) {
+                display.innerText = "00:00";
+                display.classList.add('time-up');
+                return;
+            }
+            display.classList.remove('time-up');
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            display.innerText = `${m}:${s}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('play-pause-btn');
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                btn.innerText = "▶️";
+            } else {
+                if (timeLeft <= 0) return;
+                isTimerRunning = true;
+                btn.innerText = "⏸️";
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        btn.innerText = "▶️";
+                    }
+                }, 1000);
+            }
+        }
+
+        function addMinute() {
+            timeLeft += 60;
+            updateTimerDisplay();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeLeft = 600;
+            document.getElementById('play-pause-btn').innerText = "▶️";
+            updateTimerDisplay();
+        }
+
+        function setDate() {
+            const today = new Date();
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            document.getElementById('current-date').innerText = 
+                `${days[today.getDay()]} ${today.getDate()} ${months[today.getMonth()]}`;
+        }
+
+        function loadLesson() {
+            const select = document.getElementById('lesson-select');
+            const data = lessonData[select.value];
+            
+            document.getElementById('focus-banner').innerHTML = `<strong>Focus:</strong> ${data.focus}`;
+            
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            allRevealed = false;
+
+            data.questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => toggleCard(card);
+                
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <span class="q-number">Q${index + 1}</span>
+                            <span class="diff-badge">${q.diff}</span>
+                            <div class="math-content">${q.q}</div>
+                        </div>
+                        <div class="card-back">
+                            <span class="q-number">Q${index + 1}</span>
+                            <span class="diff-badge">Answer</span>
+                            <div class="math-content">${q.a}</div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Re-render MathJax to ensure formulas format correctly
+            if (window.MathJax) {
+                MathJax.typesetPromise([grid]).catch((err) => console.log(err.message));
+            }
+        }
+
+        function toggleCard(cardElement) {
+            cardElement.classList.toggle('flipped');
+        }
+
+        function toggleAll() {
+            const cards = document.querySelectorAll('.card');
+            allRevealed = !allRevealed;
+            cards.forEach(card => {
+                if (allRevealed) {
+                    card.classList.add('flipped');
+                } else {
+                    card.classList.remove('flipped');
+                }
+            });
+        }
+
+        window.onload = () => {
+            setDate();
+            updateTimerDisplay();
+            loadLesson();
+        };
+    </script>
+</body>
+</html>
